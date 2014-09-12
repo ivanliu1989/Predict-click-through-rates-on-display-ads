@@ -11,6 +11,8 @@ sum(is.na(train))
 mean(is.na(train))
 summary(train)
 gc()
+
+train <- fread("train_num.csv")
 index <- is.na(train)
 train_na <- train[-index,]
 write.table(train_na,"train_num_na.csv",sep=",", row.names=F, col.names=T)
