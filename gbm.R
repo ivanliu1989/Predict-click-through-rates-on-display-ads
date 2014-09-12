@@ -6,3 +6,15 @@ write.table(train,"train_num.csv",sep=",", row.names=F, col.names=T)
 str(train)
 # rm("train")
 
+library(caret)
+sum(is.na(train))
+mean(is.na(train))
+summary(train)
+gc()
+index <- is.na(train)
+train_na <- train[-index,]
+write.table(train_na,"train_num_na.csv",sep=",", row.names=F, col.names=T)
+
+# imputation
+train <- read.csv("train_num_na.csv")
+train <- train[,-1]
