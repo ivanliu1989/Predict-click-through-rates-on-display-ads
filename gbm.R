@@ -23,11 +23,13 @@ library(data.table)
 # data cleansing
 #################
 train <- read.csv("train_num_na.csv")
-summary(train)
-head(train)
 train <- train[,-1]
+head(train)
+train[which(train$Label==1),1] <- "Yes"
+train[which(train$Label==0),1] <- "No"
 train$Label <- as.factor(train$Label)
-boxplot(train)
+write.table(train,"train_num_na_yesno.csv",sep=",", row.names=F, col.names=T)
+
 
 #covariate creation
     # nearZeroVar(train,saveMetrics = T)
@@ -38,9 +40,9 @@ boxplot(train)
 library(caret)
     # cl <- makePSOCKcluster(4)
     # registerDoParallel(cl)
-fit1 <- train(Label~., method="rf",data=train)
+# fit1 <- train(Label~., method="rf",data=train)
 
-    Grid <- expand.grid(n.trees=c(500),interaction.depth=c(22),shrinkage=.2)
+    Grid <- expand.grid(n.trees=c(500),interaction.depth=c(22),shrinkage=.1)
     fitControl <- trainControl(method="none", allowParallel=T, classProbs=T)
 fit2 <- train(Label~., method="gbm", data=train, trControl=fitControl, 
               verbose=T,tuneGrid=Grid, metric="ROC")
@@ -48,26 +50,51 @@ pred2 <- predict(fit2, train)
 confusionMatrix(pred2, train$Label)
 rm(pred2)
 
-fit3 <- train(Label~., method="glm",family="binomial" data=train)
-    # stopCluster(cl)
+# fit3 <- train(Label~., method="glmnet",family="binomial",classProbs=T, data=train,verbose=T)
+# fit3 <- train(Label~., method="glmnet",classProbs=T, data=train,verbose=T)
+
+# fit 4
+ctrl <- trainControl(method = "cv",
+                     number=2,
+                     classProbs = TRUE,
+                     allowParallel = TRUE,
+                     summaryFunction = twoClassSummary)
+
+set.seed(888)
+rfFit <- train(Label~.,
+               data=train,
+               method = "rf",
+#                tuneGrid = expand.grid(.mtry = 4),
+               ntrees=500,
+               importance = TRUE,
+               metric = "ROC",
+               trControl = ctrl)
+
+
+pred <- predict.train(rfFit, newdata = test, type = "prob") 
+
+
+# stopCluster(cl)
 
 # load test data
     # test <- fread("test.csv", select=c(1:14))
     # write.table(test,"test_num.csv",sep=",", row.names=F, col.names=T)
-test <- read.csv("test_num.csv")
-
+    # test <- read.csv("test_num.csv")
+test <- read.csv("test_num_impute.csv")
 # test data imputation
-pre<-preProcess(test, method='medianImpute')
-test_impute <- predict(pre, test)
+    # pre<-preProcess(test, method='medianImpute')
+    # test_impute <- predict(pre, test)
 
 # predict
 gc()
-pred1 <- predict(fit1, test)
-test$pred2 <- predict(fit2, test_impute)
-pred3 <- predict(fit3, test)
+    # pred1 <- predict(fit1, test)
+pred2 <- predict(fit2,type="prob", test)
+head(test)
+pred2 <- plogis(pred2)
+    # pred3 <- predict(fit3, test)
 # ensembling-models
-data(pred1,pred2,pred3,train)
-combFit<-train(Label~.,method="gam", train)
+    # data(pred1,pred2,pred3,train)
+    # combFit<-train(Label~.,method="gam", train)
 
 # output
 fit2.submit <- data.frame(test$Id, test$pred2)
