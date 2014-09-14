@@ -43,19 +43,27 @@ fit1 <- train(Label~., method="rf",data=train)
     Grid <- expand.grid(n.trees=c(500),interaction.depth=c(22),shrinkage=.2)
     fitControl <- trainControl(method="none", allowParallel=T, classProbs=T)
 fit2 <- train(Label~., method="gbm", data=train, trControl=fitControl, verbose=T,tuneGrid=Grid, metric="ROC")
+pred2 <- predict(fit2, train)
+confusionMatrix(pred2, train$Label)
+rm(pred2)
 
 fit3 <- train(Label~., method="nb", data=train)
 stopCluster(cl)
 
 # load test data
-test <- fread("test.csv", select=c(1:15))
+test <- fread("test.csv", select=c(1:14))
 write.table(test,"test_num.csv",sep=",", row.names=F, col.names=T)
 
 # predict
 gc()
 pred1 <- predict(fit1, test)
-pred2 <- predict(fit2, test)
+test$pred2 <- predict(fit2, test)
 pred3 <- predict(fit3, test)
 # ensembling-models
 data(pred1,pred2,pred3,train)
 combFit<-train(Label~.,method="gam", train)
+
+# output
+fit2.submit <- data.frame(test$Id, test$pred2)
+colnames(fit2.submit)<- c("Id","Label")
+write.table(fit2.submit,"gbm_num_nona.csv", row.names=F)
