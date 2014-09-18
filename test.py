@@ -1,3 +1,4 @@
+from numpy import *
 dataMat = []; labelMat = []
 fr = open('testSet.txt')
 for line in fr.readlines():
@@ -8,5 +9,4 @@ for line in fr.readlines():
     dataMat.append(singleArr)
     labelMat.append(int(lineArr[2]))
 
-print dataMat
-print labelMat
+print ones(18)
