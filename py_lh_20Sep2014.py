@@ -1,15 +1,15 @@
 from datetime import datetime
 from csv import DictReader
 from math import exp, log, sqrt
-
+import scipy as sp
 
 # parameters #################################################################
 
 train = 'train.csv'  # path to training file
 test = 'test.csv'  # path to testing file
 
-D = 2 ** 20   # number of weights use for learning
-alpha = .2    # learning rate for sgd optimization
+D = 2 ** 27  # number of weights use for learning
+alpha = .15    # learning rate for sgd optimization
 
 
 # function definitions #######################################################
@@ -21,9 +21,12 @@ alpha = .2    # learning rate for sgd optimization
 # OUTPUT
 #     logarithmic loss of p given y
 def logloss(p, y):
-    p = max(min(p, 1. - 10e-12), 10e-12)
-    return -log(p) if y == 1. else -log(1. - p)
-
+    epsilon = 1e-15
+    p = sp.maximum(epsilon, p)
+    p = sp.minimum(1-epsilon, p)
+    ll = sum(y*sp.log(p) + sp.subtract(1,y)*sp.log(sp.subtract(1,p)))
+    ll = ll * -1.0/len(y)
+    return ll
 
 # B. Apply hash trick of the original csv row
 # for simplicity, we treat both integer and categorical features as categorical
@@ -50,7 +53,7 @@ def get_p(x, w):
     wTx = 0.
     for i in x:  # do wTx
         wTx += w[i] * 1.  # w[i] * x[i], but if i in x we got x[i] = 1.
-    return 1. / (1. + exp(-max(min(wTx, 20.), -20.)))  # bounded sigmoid
+    return 1. / (1. + exp(-max(min(wTx, 10.), -10.)))  # bounded sigmoid
 
 
 # D. Update given model
@@ -106,7 +109,7 @@ for t, row in enumerate(DictReader(open(train))):
     w, n = update_w(w, n, x, p, y)
 
 # testing (build kaggle's submission file)
-with open('submissionPython.csv', 'w') as submission:
+with open('submissionPython_20Sep2014_2.csv', 'w') as submission:
     submission.write('Id,Predicted\n')
     for t, row in enumerate(DictReader(open(test))):
         Id = row['Id']

@@ -1,0 +1,20 @@
+Training VW:
+./vw click.train.vw -f click.model.vw --loss_function logistic
+
+
+Testing VW:
+./vw click.test.vw -t -i click.model.vw -p click.preds.txt
+
+
+Training VW2:
+./vw click.train.vw -b 28 -l 10 -c --passes 25 --holdout_off -f click.model.vw --loss_function logistic
+
+
+Training VM3:
+./vw click.train.vw -b 28 -l 10 -c --passes 25 --holdout_off --power_t=1 -f click.model.vw --loss_function logistic
+
+parameters:
+-b bits
+-l rate
+--power_t p
+

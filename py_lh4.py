@@ -8,8 +8,8 @@ from math import exp, log, sqrt
 train = 'train.csv'  # path to training file
 test = 'test.csv'  # path to testing file
 
-D = 2 ** 20   # number of weights use for learning
-alpha = .2    # learning rate for sgd optimization
+D = 2 ** 27  # number of weights use for learning
+alpha = .145    # learning rate for sgd optimization
 
 
 # function definitions #######################################################
@@ -106,7 +106,7 @@ for t, row in enumerate(DictReader(open(train))):
     w, n = update_w(w, n, x, p, y)
 
 # testing (build kaggle's submission file)
-with open('submissionPython.csv', 'w') as submission:
+with open('submissionPython5.csv', 'w') as submission:
     submission.write('Id,Predicted\n')
     for t, row in enumerate(DictReader(open(test))):
         Id = row['Id']
