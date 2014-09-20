@@ -7,6 +7,6 @@ def zygmoid(x):
 
 with open("kaggle.click.submission.csv","wb") as outfile:
 	outfile.write("Id,Predicted\n")
-	for line in open("click.preds3.txt"):
+	for line in open("click.preds2.txt"):
 		row = line.strip().split(" ")
 		outfile.write("%s,%f\n"%(row[1],zygmoid(float(row[0]))))

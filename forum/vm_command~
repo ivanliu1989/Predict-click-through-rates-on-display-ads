@@ -17,6 +17,4 @@ parameters:
 -b bits
 -l rate
 --power_t p
---passes
--c
---holdout_off
+
