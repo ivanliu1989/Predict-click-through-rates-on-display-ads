@@ -9,7 +9,7 @@ train = 'train.csv'  # path to training file
 test = 'test.csv'  # path to testing file
 
 D = 2 ** 27  # number of weights use for learning
-alpha = .15    # learning rate for sgd optimization
+alpha = .145    # learning rate for sgd optimization
 
 
 # function definitions #######################################################
@@ -22,10 +22,9 @@ alpha = .15    # learning rate for sgd optimization
 #     logarithmic loss of p given y
 def logloss(p, y):
     epsilon = 1e-15
-    p = sp.maximum(epsilon, p)
-    p = sp.minimum(1-epsilon, p)
-    ll = sum(y*sp.log(p) + sp.subtract(1,y)*sp.log(sp.subtract(1,p)))
-    ll = ll * -1.0/len(y)
+    p = max(min(p, 1. - epsilon), epsilon)
+    ll = y*sp.log(p) + sp.subtract(1,y)*sp.log(sp.subtract(1,p))
+    ll = ll * -1.0/1
     return ll
 
 # B. Apply hash trick of the original csv row
@@ -74,7 +73,6 @@ def update_w(w, n, x, p, y):
         # note that in our case, if i in x then x[i] = 1
         w[i] -= (p - y) * alpha / (sqrt(n[i]) + 1.)
         n[i] += 1.
-
     return w, n
 
 
@@ -101,15 +99,16 @@ for t, row in enumerate(DictReader(open(train))):
 
     # for progress validation, useless for learning our model
     loss += logloss(p, y)
-    if t % 1000000 == 0 and t > 1:
+    if t % 100000 == 0 and t > 1:
         print('%s\tencountered: %d\tcurrent logloss: %f' % (
             datetime.now(), t, loss/t))
 
     # step 3, update model with answer
-    w, n = update_w(w, n, x, p, y)
-
+    if t <= 40000000:    
+        w, n = update_w(w, n, x, p, y)
+        
 # testing (build kaggle's submission file)
-with open('submissionPython_20Sep2014_2.csv', 'w') as submission:
+with open('submissionPython_21Sep2014.csv', 'w') as submission:
     submission.write('Id,Predicted\n')
     for t, row in enumerate(DictReader(open(test))):
         Id = row['Id']
