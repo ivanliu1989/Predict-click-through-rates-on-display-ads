@@ -1,0 +1,6 @@
+vw click.train.vw -f click.model.vw --bfgs --passes 20 --holdout_after 40000000 -b 26 --cache_file click.train.vw.cache -l 0.145 --holdout_period 10
+
+vw click.train.vw -f click.model.vw -q:: --holdout_period 5 --noconstant --hash all --loss_function logistic -b 28 --save_per_pass --bfgs --termination 0.001 --passes 10 -l 0.1 --cache_file click.train.vw.cache
+
+
+--feature_mask
