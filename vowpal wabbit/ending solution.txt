@@ -1,0 +1,9 @@
+vw train_nw.vw -f data/model.vw --loss_function logistic -b 25 -l .15 -c --passes 5 -q cc -q ii -q ci --holdout_off --cubic iii --decay_learning_rate .8
+
+vw --holdout_off --cache_file data/train_cat_int.cache --loss_function logistic -b 29 --passes 6 -l 0.01 --nn 60 --power_t 0 -f data/nn60_l001_p6.mod
+
+vw -d train.vw -c -b 28 --link=logistic --loss_function logistic --passes 2 --holdout_off --ngram c3 --ngram n2 --skips n1 --ngram f2 --skips f1 --l2 7.12091e-09 -l 0.240971683207491 --initial_t 1.53478225382649 --decay_learning_rate 0.267332
+
+vw click4.TT.train.vw -k -c -f click.neu13.model.vw --loss_function logistic --passes 20 -l 0.15 -b 25 --nn 35 --holdout_period 50 --early_terminate 1
+
+ ./vowpalwabbit/vw ../xtrain4.vw -c -k -l 0.1 -b 29 --loss_function logistic -q cc -q ii -q ci --holdout_off -f xmodel.vw
