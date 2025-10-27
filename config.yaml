@@ -1,0 +1,161 @@
+# Configuration file for CTR Prediction Project
+# =============================================
+
+# Project metadata
+project:
+  name: "CTR Prediction"
+  version: "2.0"
+  description: "Click-Through Rate prediction for display advertising"
+
+# Data paths
+data:
+  root_dir: "./data"
+  train_file: "train.csv"
+  test_file: "test.csv"
+  sample_train_file: "train_sample.csv"  # Optional: smaller dataset for testing
+
+  # Processed data
+  train_vw: "train.vw"
+  test_vw: "test.vw"
+
+  # Validation split (if doing train/val split)
+  validation_split: 0.2
+  random_seed: 42
+
+# Output paths
+output:
+  root_dir: "./output"
+  submission_file: "submission.csv"
+  log_file: "training.log"
+  model_dir: "./models"
+
+# Logistic Regression with SGD configuration
+logistic_regression:
+  # Feature hashing
+  dimension: 134217728  # 2^27 = 134,217,728 features
+
+  # Optimization
+  learning_rate: 0.145
+  adaptive_learning: true
+
+  # Training
+  max_passes: 1
+  log_interval: 1000000  # Log every 1M samples
+
+  # Numerical stability
+  epsilon: 1.0e-12
+  sigmoid_bound: 20.0  # Bound input to sigmoid to [-20, 20]
+
+# Gradient Boosting Machine (GBM) configuration
+gbm:
+  # Model hyperparameters
+  n_trees: 500
+  interaction_depth: 22
+  shrinkage: 0.1
+  min_samples_split: 10
+
+  # Training
+  cv_folds: 2
+  metric: "ROC"
+  verbose: true
+
+  # Computation
+  n_jobs: -1  # Use all CPU cores
+  random_state: 888
+
+# Vowpal Wabbit configuration
+vowpal_wabbit:
+  # Training options
+  loss_function: "logistic"
+  learning_rate: 0.5
+  l1_lambda: 0.0
+  l2_lambda: 0.0
+
+  # Optimization
+  passes: 3
+  cache_file: "./data/train.cache"
+
+  # Feature engineering
+  quadratic: ""  # e.g., "ii" for quadratic interactions in namespace i
+  cubic: ""      # e.g., "iii" for cubic interactions
+
+  # Hashing
+  bit_precision: 27  # 2^27 features
+
+  # Output
+  model_file: "./models/click.model.vw"
+  predictions_file: "./output/vw_predictions.txt"
+
+# Data preprocessing
+preprocessing:
+  # Missing value handling
+  numerical_imputation: "median"  # Options: mean, median, zero
+  categorical_imputation: "mode"   # Options: mode, unknown
+
+  # Feature engineering
+  create_interactions: false
+  polynomial_features: false
+  polynomial_degree: 2
+
+  # Scaling (usually not needed for tree-based methods)
+  scale_features: false
+  scaler_type: "standard"  # Options: standard, minmax, robust
+
+# Model evaluation
+evaluation:
+  metrics:
+    - "log_loss"
+    - "auc_roc"
+    - "accuracy"
+    - "precision"
+    - "recall"
+
+  # Validation
+  use_validation: false
+  validation_size: 0.2
+
+# Logging configuration
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_to_file: true
+  log_to_console: true
+
+# Experiment tracking
+experiment:
+  track_experiments: false
+  experiment_name: "baseline"
+  tags:
+    - "logistic_regression"
+    - "hash_trick"
+
+# Resource constraints
+resources:
+  # Memory limits (in GB)
+  max_memory_gb: 16
+
+  # CPU
+  n_processes: 4
+
+  # GPU (if available)
+  use_gpu: false
+  gpu_device: 0
+
+# Reproducibility
+reproducibility:
+  random_seed: 42
+  deterministic: true
+
+# Development settings
+development:
+  # Use smaller sample for quick testing
+  use_sample: false
+  sample_size: 1000000  # First 1M rows
+
+  # Debug mode
+  debug: false
+  profile_code: false
+
+  # Testing
+  run_tests: true
+  test_coverage_threshold: 0.8
