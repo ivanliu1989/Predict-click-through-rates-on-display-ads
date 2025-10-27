@@ -1,0 +1,112 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+*.pyproj
+*.sln
+*.suo
+*.user
+*.userosscache
+.vs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# R
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+*.Rproj
+.Rproj.user/
+
+# Data files (large datasets)
+*.csv
+!**/sample*.csv
+*.tsv
+*.dat
+*.txt
+!requirements.txt
+!requirements-r.txt
+!README.txt
+!LICENSE.txt
+
+# Model files (can be large)
+*.model
+*.vw
+*.pkl
+*.h5
+*.joblib
+
+# Logs
+*.log
+logs/
+
+# Output/Submission files
+submission*.csv
+*submit*.csv
+output/
+results/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*~
+*.cache
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Backup files
+*.orig
+*~
+
+# Claude settings (keep local only)
+.claude/settings.local.json

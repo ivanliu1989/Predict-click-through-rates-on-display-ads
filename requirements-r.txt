@@ -1,0 +1,6 @@
+# R Package Dependencies
+# Install with: Rscript -e "install.packages(c('data.table', 'caret', 'gbm'))"
+
+data.table>=1.14.0
+caret>=6.0-90
+gbm>=2.1.8
